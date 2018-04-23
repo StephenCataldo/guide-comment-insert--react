@@ -28,7 +28,7 @@ import { Provider } from 'react-redux'
 import { createStore } from 'redux'
 */
 import classnames from 'classnames';
-import jQuery from "./maybe_bad/jquery";
+import jQuery from "./library/jquery";
 window.$ = window.jQuery = jQuery;
 //import * as GuideActions from '../../app/actions/guides';
 import * as TodoActions from '../../app/actions/todos';
@@ -40,7 +40,6 @@ $('.highlight').css({
   'background': 'yellow',
   'border': '1px solid blue'
   });
-
 
 // returns the webPage to the store
 function loadSMG (topic, url, actions) {
