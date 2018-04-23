@@ -470,6 +470,8 @@ matchText(document.body, re, function(node, pattern) {
       this.setState({val1: updatedList});      
     }
   }
+  /** Ok, it's pretty weird to do this as React, and then not render.
+   * CBB might have done a better job. We do need the data store for the app!
  render() {
     const { todos, actions } = this.props;
 
@@ -491,13 +493,6 @@ matchText(document.body, re, function(node, pattern) {
       <div id="RTP">RTP: this.props.topic} this.props.guide}</div>
     );
   }
-
-
+  */
 }
 
-
-//window.highlightOnClickX=function() {
-//ReactDOM.highlightOnClickX=function() {
-const highlightOnClickX = function() {
-  console.log("can I just write crap javascript");
-}

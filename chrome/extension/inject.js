@@ -6,69 +6,17 @@ import { Provider } from 'react-redux';
 import ResourcesThisPage from './ResourcesThisPage';
 
 
-class InjectApp extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { isVisible: false };
-  }
-
-  buttonOnClick = () => {
-    this.setState({ isVisible: !this.state.isVisible });
-    console.log("toggling the window"); // have not seen this
-  };
-
-// Seems like store = createStore is missing. Here also Root and App which work.
-// Note: http://www.thegreatcodeadventure.com/react-redux-tutorial-part-iii-async-redux/
-//  encourages creating the store here... it seems to be just props here, or has
-//  createStore been called ... and then having the store call the functions to load
-//  data. store.dispatch(loadCats());
-  
-
-  static propTypes = {
-    store: PropTypes.object.isRequired
-  };
-
-  render() {
-    const { store } = this.props;
-    return (
-        <div>
-      <Provider store={store}> 
-        <ResourcesThisPage/>
-      </Provider>
-        </div>
-    );
-
-/*
-          <button onClick={this.buttonOnClick}>
-            Open TodoApp
-          </button>
-          <Dock
-            position="right"
-            dimMode="transparent"
-            defaultSize={0.4}
-            isVisible={this.state.isVisible}
-          >
-            <iframe
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-              frameBorder={0}
-              allowTransparency="true"
-              src={chrome.extension.getURL(`inject.html?protocol=${location.protocol}`)}
-            />
-          </Dock>
-*/
-  }
-}
 
 
-// For simple page: document readyState is complete
-// The window tends to take a while to load. I think something done
-// faster might be ok?
-// Reread: https://stackoverflow.com/questions/588040/window-onload-vs-document-onload. Below is a hack, sometimes document, sometimes window, expected to
-// sometimes run twice (not a disaster). Document loaded should be sufficient
-// for the text-oriented, DOM-oriented injectActions.
+/** 1. Initiate the process, firing injectActions function, which inject InjectApp
+ *  document.readyState can be odd for chrome extensions,
+ *  sometimes being done before the addEventListener fires.
+ *  Reread: https://stackoverflow.com/questions/588040/window-onload-vs-document-onload.
+ *  @ToDo: Refactor, I think this sometimes runs twice, nbd.
+ *  @ToDo: this won't work well on Facebook, where the document loads, and then javascript
+ *  loads more text!
+ */
+
 console.log(window.window_name);
 var windw = window.window_name;
 if ( document.readyState == "complete" ||
@@ -79,6 +27,8 @@ if ( document.readyState == "complete" ||
   console.log("window addEventListener for load ***");
   window.addEventListener('load', injectActions());
 }
+
+
 
 function injectActions() {
   /** When window loads, search it for keyterms, then turn them into
@@ -108,4 +58,44 @@ function injectActions() {
      /***/
     render(<InjectApp store={createStore(initialState)} />, injectDOM);
   });
+}
+
+/** InjectApp is a React component, which brings along the data store
+ * that connects the inject script to our app
+ * runs ResourcesThisPage.
+ */
+class InjectApp extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { isVisible: false };
+  }
+
+  /*
+  buttonOnClick = () => {
+    this.setState({ isVisible: !this.state.isVisible });
+    console.log("toggling the window"); // have not seen this
+  };
+  */
+
+// Seems like store = createStore is missing. Here also Root and App which work.
+// Note: http://www.thegreatcodeadventure.com/react-redux-tutorial-part-iii-async-redux/
+//  encourages creating the store here... it seems to be just props here, or has
+//  createStore been called ... and then having the store call the functions to load
+//  data. store.dispatch(loadCats());
+
+
+  static propTypes = {
+    store: PropTypes.object.isRequired
+  };
+
+  render() {
+    const { store } = this.props;
+    return (
+      <div>
+        <Provider store={store}>
+          <ResourcesThisPage/>
+        </Provider>
+      </div>
+    );
+  }
 }
